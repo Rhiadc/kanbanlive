@@ -1,0 +1,45 @@
+<h1>Listing Tasks</h1>
+
+<%= if @live_action in [:new, :edit] do %>
+  <%= live_modal @socket, KanbanliveWeb.TaskLive.FormComponent,
+    id: @task.id || :new,
+    title: @page_title,
+    action: @live_action,
+    task: @task,
+    users: @users,
+    return_to: Routes.task_index_path(@socket, :index) %>
+<% end %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Description</th>
+      <th>Status</th>
+      <th>Relator</th>
+      <th>Executor</th>
+      <th>Action</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody id="tasks">
+    <%= for task <- @tasks do %>
+      <tr id="task-<%= task.id %>">
+        <td><%= task.title %></td>
+        <td><%= task.description %></td>
+        <td><%= task.status %></td>
+        <td><%= task.owner.name  %></td>
+        <td><%= task.asignee.name %></td>
+
+
+        <td>
+          <span><%= live_redirect "Show", to: Routes.task_show_path(@socket, :show, task) %></span>
+          <span><%= live_patch "Edit", to: Routes.task_index_path(@socket, :edit, task) %></span>
+          <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: task.id, data: [confirm: "Are you sure?"] %></span>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<span><%= live_patch "New Task", to: Routes.task_index_path(@socket, :new) %></span>
